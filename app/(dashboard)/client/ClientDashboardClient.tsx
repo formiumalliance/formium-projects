@@ -355,7 +355,7 @@ export default function ClientDashboardClient({ projects, activeProject, userNam
 
           {/* Quick actions */}
           <div className="card" style={{ padding: '16px' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '11px' }}>
+            <h3 style={{ fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '11px' }}>
               Quick actions
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

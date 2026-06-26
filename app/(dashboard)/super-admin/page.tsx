@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/super-admin/page.tsx
 import { requireAdminRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'
@@ -128,8 +129,7 @@ export default async function SuperAdminDashboardPage() {
                   textDecoration: 'none',
                   transition: 'background 0.15s',
                 }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--bg-secondary)'}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
+  
               >
                 <div style={{ minWidth: 0 }}>
                   <p style={{
@@ -228,7 +228,7 @@ export default async function SuperAdminDashboardPage() {
 
           {/* Quick links */}
           <div className="card" style={{ padding: '16px' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '10px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <h3 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Quick actions
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -250,14 +250,7 @@ export default async function SuperAdminDashboardPage() {
                     textDecoration: 'none',
                     transition: 'all 0.15s',
                   }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'var(--bg-secondary)'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text)'
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.background = 'transparent'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-                  }}
+                  
                 >
                   → {item.label}
                 </Link>

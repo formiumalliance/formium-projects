@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/tasks/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -44,7 +45,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 
     // Client can only see client-visible tasks
-    if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER].includes(userRole)) {
+    if (
+  userRole === UserRole.CLIENT_ADMIN ||
+  userRole === UserRole.CLIENT_MEMBER
+) {
     where.isClientVisible = true
   }
 

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/client/updates/page.tsx
 import { requireClientRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'
@@ -31,5 +32,15 @@ export default async function ClientUpdatesPage() {
     orderBy: { publishedAt: 'desc' },
   })
 
-  return <ClientUpdatesClient updates={updates} userId={session.user.id} />
+  const serializedUpdates = updates.map((update) => ({
+    ...update,
+    publishedAt: update.publishedAt?.toISOString() ?? undefined,
+  }))
+
+  return (
+    <ClientUpdatesClient
+      updates={serializedUpdates}
+      userId={session.user.id}
+    />
+  )
 }

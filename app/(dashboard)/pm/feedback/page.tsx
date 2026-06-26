@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/pm/feedback/page.tsx
 import { requireRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'
@@ -31,5 +32,16 @@ export default async function PMFeedbackPage() {
     select: { id: true, name: true, role: true },
   })
 
-  return <PMFeedbackClient feedbackItems={feedbackItems} developers={developers} />
+  const serializedFeedbackItems = feedbackItems.map(item => ({
+  ...item,
+  createdAt: item.createdAt.toISOString(),
+  updatedAt: item.updatedAt?.toISOString?.() ?? item.updatedAt,
+}))
+
+return (
+  <PMFeedbackClient
+    feedbackItems={serializedFeedbackItems}
+    developers={developers}
+  />
+)
 }

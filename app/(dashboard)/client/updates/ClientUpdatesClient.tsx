@@ -25,9 +25,22 @@ const ROLE_LABELS: Record<string, string> = {
 interface Comment {
   id: string
   content: string
-  createdAt: string
-  user: { id: string; name: string; avatar?: string; role: string }
-  replies: Comment[]
+  createdAt: string | Date
+  updatedAt?: string | Date
+  userId?: string
+  projectId?: string | null
+  updateId?: string | null
+  parentId?: string | null
+  isEdited?: boolean
+
+  user: {
+    id: string
+    name: string
+    avatar?: string | null
+    role: string
+  }
+
+  replies?: Comment[]
 }
 
 interface Update {
@@ -35,13 +48,20 @@ interface Update {
   title: string
   content: string
   phase: string
-  publishedAt?: string
-  publishedBy: { id: string; name: string; avatar?: string }
-  project: { id: string; name: string; slug: string }
+  publishedAt?: string | null
+  publishedBy: {
+    id: string
+    name: string
+    avatar?: string | null
+  }
+  project: {
+    id: string
+    name: string
+    slug: string
+  }
   attachments: any[]
   comments: Comment[]
 }
-
 interface Props {
   updates: Update[]
   userId: string

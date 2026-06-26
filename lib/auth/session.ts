@@ -51,9 +51,13 @@ export async function canAccessProject(projectId: string, userId: string, userRo
   const { prisma } = await import('@/lib/db/prisma')
   
   // Admins can access all
-  if ([UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD, UserRole.BUSINESS_GROWTH_MANAGER].includes(userRole)) {
-    return true
-  }
+  if (
+  userRole === UserRole.SUPER_ADMIN ||
+  userRole === UserRole.PROJECT_HEAD ||
+  userRole === UserRole.BUSINESS_GROWTH_MANAGER
+) {
+  return true
+}
   
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -76,7 +80,10 @@ export async function canAccessProject(projectId: string, userId: string, userRo
     return project.developers.some(d => d.userId === userId)
   }
   
-  if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER].includes(userRole)) {
+  if (
+  userRole === UserRole.CLIENT_ADMIN ||
+  userRole === UserRole.CLIENT_MEMBER
+) {
     return project.clientProfile?.userId === userId
   }
   

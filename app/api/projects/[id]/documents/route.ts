@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/documents/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -23,8 +24,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const type = searchParams.get('type')
 
     const userRole = session.user.role as UserRole
-    const isClient = [UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER].includes(userRole)
-
+    const isClient =
+  userRole === UserRole.CLIENT_ADMIN ||
+  userRole === UserRole.CLIENT_MEMBER
     // Clients can only see certain document types
     const clientVisibleTypes: DocumentType[] = ['AGREEMENT', 'INVOICE', 'RECEIPT', 'HANDOVER']
 
@@ -53,7 +55,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER, UserRole.DEVELOPER].includes(userRole)) {
+    if (
+  userRole === UserRole.CLIENT_ADMIN ||
+  userRole === UserRole.CLIENT_MEMBER ||
+  userRole === UserRole.DEVELOPER
+) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
   }
 

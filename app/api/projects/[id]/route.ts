@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -140,7 +141,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     action: 'UPDATE',
     entity: 'Project',
     entityId: params.id,
-    oldValues: oldProject,
+    oldValues: oldProject || undefined,
     newValues: parsed.data,
   })
 
@@ -156,7 +157,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN].includes(userRole)) {
+    if (userRole !== UserRole.SUPER_ADMIN) {
     return NextResponse.json({ error: 'Only Super Admins can delete projects' }, { status: 403 })
   }
 

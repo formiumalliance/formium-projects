@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/admin/users/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -23,7 +24,10 @@ export async function GET(req: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD].includes(userRole)) {
+    if (
+  userRole !== UserRole.SUPER_ADMIN &&
+  userRole !== UserRole.PROJECT_HEAD
+) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
   }
 
@@ -72,9 +76,13 @@ export async function POST(req: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD].includes(userRole)) {
-    return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
-  }
+
+if (
+  userRole !== UserRole.SUPER_ADMIN &&
+  userRole !== UserRole.PROJECT_HEAD
+) {
+  return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
+}
 
     const body = await req.json()
     const parsed = CreateUserSchema.safeParse(body)
@@ -97,7 +105,10 @@ export async function POST(req: NextRequest) {
   })
 
     // Create client profile if client role
-    if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER].includes(parsed.data.role)) {
+    if (
+  parsed.data.role === UserRole.CLIENT_ADMIN ||
+  parsed.data.role === UserRole.CLIENT_MEMBER
+) {
     await prisma.clientProfile.create({
       data: {
         userId: user.id,
@@ -124,7 +135,7 @@ export async function PATCH(req: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN].includes(userRole)) {
+    if (userRole !== UserRole.SUPER_ADMIN) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
   }
 

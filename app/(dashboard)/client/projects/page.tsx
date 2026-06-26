@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/client/projects/page.tsx
 import { requireClientRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'

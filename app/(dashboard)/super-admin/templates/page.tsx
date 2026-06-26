@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/super-admin/templates/page.tsx
 import { requireAdminRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'

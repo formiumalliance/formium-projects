@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/files/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -58,7 +59,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!folder) return NextResponse.json({ error: 'Invalid folder' }, { status: 400 })
 
     const userRole = session.user.role as UserRole
-    if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER].includes(userRole) && !folder.isClientVisible) {
+    if (
+  (userRole === UserRole.CLIENT_ADMIN ||
+    userRole === UserRole.CLIENT_MEMBER) &&
+  !folder.isClientVisible
+) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
   }

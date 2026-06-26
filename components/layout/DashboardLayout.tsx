@@ -2,39 +2,92 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import {
-  LayoutDashboard, FolderKanban, Users, Settings, Bell,
-  LogOut, Sun, Moon, Menu, X, ChevronDown, ChevronRight,
-  FileText, GitBranch, Inbox, Archive, BarChart2, Shield,
-  Code2, UserCheck, Briefcase, PlusCircle, Package
+  Bell, LogOut, Sun, Moon, Menu, X,
+  LayoutDashboard, FolderKanban, Users, Settings, FileText,
+  Shield, Package, GitBranch, Archive, CheckSquare, MessageSquare,
+  PlusCircle, TrendingUp, FolderOpen, User
 } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
 import NotificationsDropdown from '@/components/notifications/NotificationsDropdown'
 
-interface NavItem {
-  label: string
-  href: string
-  icon: React.ElementType
-  badge?: number
+// ─── Nav definitions (all icons live here, never passed as props) ─────────────
+const PORTAL_NAV: Record<string, { label: string; href: string; icon: React.ElementType }[]> = {
+  'super-admin': [
+    { label: 'Dashboard',       href: '/super-admin',                 icon: LayoutDashboard },
+    { label: 'All Projects',    href: '/super-admin/projects',        icon: FolderKanban },
+    { label: 'Users',           href: '/super-admin/users',           icon: Users },
+    { label: 'Templates',       href: '/super-admin/templates',       icon: FileText },
+    { label: 'Documents',       href: '/super-admin/documents',       icon: FileText },
+    { label: 'Change Requests', href: '/super-admin/change-requests', icon: GitBranch },
+    { label: 'Handovers',       href: '/super-admin/handovers',       icon: Package },
+    { label: 'Archive',         href: '/super-admin/archive',         icon: Archive },
+    { label: 'Audit Log',       href: '/super-admin/audit',           icon: Shield },
+    { label: 'Settings',        href: '/super-admin/settings',        icon: Settings },
+  ],
+  'project-head': [
+    { label: 'Dashboard',       href: '/project-head',                 icon: LayoutDashboard },
+    { label: 'All Projects',    href: '/project-head/projects',        icon: FolderKanban },
+    { label: 'Team',            href: '/project-head/team',            icon: Users },
+    { label: 'Change Requests', href: '/project-head/change-requests', icon: GitBranch },
+    { label: 'Handovers',       href: '/project-head/handovers',       icon: Package },
+    { label: 'Documents',       href: '/project-head/documents',       icon: FileText },
+    { label: 'Templates',       href: '/project-head/templates',       icon: Settings },
+  ],
+  'pm': [
+    { label: 'Dashboard',       href: '/pm',                 icon: LayoutDashboard },
+    { label: 'Projects',        href: '/pm/projects',        icon: FolderKanban },
+    { label: 'Tasks',           href: '/pm/tasks',           icon: CheckSquare },
+    { label: 'Updates',         href: '/pm/updates',         icon: MessageSquare },
+    { label: 'Change Requests', href: '/pm/change-requests', icon: GitBranch },
+    { label: 'Feedback',        href: '/pm/feedback',        icon: MessageSquare },
+    { label: 'Documents',       href: '/pm/documents',       icon: FileText },
+    { label: 'Handover',        href: '/pm/handover',        icon: Package },
+  ],
+  'bgm': [
+    { label: 'Dashboard',    href: '/bgm',              icon: LayoutDashboard },
+    { label: 'All Projects', href: '/bgm/projects',     icon: FolderKanban },
+    { label: 'New Project',  href: '/bgm/projects/new', icon: PlusCircle },
+    { label: 'Proposals',    href: '/bgm/proposals',    icon: FileText },
+    { label: 'Revenue',      href: '/bgm/revenue',      icon: TrendingUp },
+  ],
+  'dev': [
+    { label: 'My Tasks', href: '/dev',          icon: CheckSquare },
+    { label: 'Projects', href: '/dev/projects', icon: FolderKanban },
+    { label: 'Updates',  href: '/dev/updates',  icon: MessageSquare },
+  ],
+  'client': [
+    { label: 'Dashboard',       href: '/client',                 icon: LayoutDashboard },
+    { label: 'My Projects',     href: '/client/projects',        icon: FolderOpen },
+    { label: 'Updates',         href: '/client/updates',         icon: MessageSquare },
+    { label: 'Change Requests', href: '/client/change-requests', icon: GitBranch },
+    { label: 'Files',           href: '/client/files',           icon: FileText },
+    { label: 'Handover',        href: '/client/handover',        icon: Package },
+  ],
+  'settings': [
+    { label: 'Account', href: '/settings', icon: User },
+  ],
 }
 
 interface DashboardLayoutProps {
   children: React.ReactNode
-  navItems: NavItem[]
-  portalName: string
+  portalKey: string   // e.g. 'super-admin', 'pm', 'dev', etc.
+  portalName: string  // e.g. 'Super Admin', 'PM Portal', etc.
 }
 
-export default function DashboardLayout({ children, navItems, portalName }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, portalKey, portalName }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const pathname = usePathname()
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
-  const router = useRouter()
+
+  const navItems = PORTAL_NAV[portalKey] ?? []
+  const user = session?.user
 
   useEffect(() => {
     fetch('/api/notifications?unread=true')
@@ -42,8 +95,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
       .then(data => setUnreadCount(data.unreadCount || 0))
       .catch(() => {})
   }, [pathname])
-
-  const user = session?.user
 
   return (
     <div style={{ display: 'flex', minHeight: '100dvh', background: 'var(--bg-secondary)' }}>
@@ -119,20 +170,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
               >
                 <item.icon size={16} strokeWidth={1.75} />
                 <span style={{ flex: 1 }}>{item.label}</span>
-                {item.badge !== undefined && item.badge > 0 && (
-                  <span style={{
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    background: 'var(--accent)',
-                    color: '#fff',
-                    borderRadius: '100px',
-                    padding: '1px 6px',
-                    minWidth: '18px',
-                    textAlign: 'center',
-                  }}>
-                    {item.badge}
-                  </span>
-                )}
               </Link>
             )
           })}
@@ -146,7 +183,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
           flexDirection: 'column',
           gap: '2px',
         }}>
-          {/* Theme toggle */}
           <button
             className="nav-item"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -155,7 +191,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
             <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
           </button>
 
-          {/* User info */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -218,7 +253,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
 
           <div style={{ flex: 1 }} />
 
-          {/* Notifications */}
           <div style={{ position: 'relative' }}>
             <button
               className="btn btn-ghost btn-sm"
@@ -245,7 +279,6 @@ export default function DashboardLayout({ children, navItems, portalName }: Dash
           </div>
         </header>
 
-        {/* Page content */}
         <main style={{ flex: 1, padding: '24px 20px', maxWidth: '1280px', width: '100%', margin: '0 auto' }}>
           {children}
         </main>

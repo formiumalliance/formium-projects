@@ -112,7 +112,7 @@ export default function NewProjectPage() {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Basics */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '11px' }}>
+          <h2 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Project basics
           </h2>
 

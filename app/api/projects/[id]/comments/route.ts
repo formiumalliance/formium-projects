@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/comments/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'

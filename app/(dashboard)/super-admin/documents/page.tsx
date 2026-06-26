@@ -1,9 +1,11 @@
+export const dynamic = 'force-dynamic'
 // app/(dashboard)/super-admin/documents/page.tsx
 import { requireAdminRole } from '@/lib/auth/session'
 import { prisma } from '@/lib/db/prisma'
 import { formatDate } from '@/lib/utils'
 import { FileText, Download, Eye } from 'lucide-react'
 import Link from 'next/link'
+import DocumentFilters from './DocumentFilters'
 
 const DOC_TYPE_CONFIG: Record<string, { label: string; cls: string; emoji: string }> = {
   PROPOSAL:       { label: 'Proposal',        cls: 'badge-blue',   emoji: '📋' },
@@ -53,42 +55,13 @@ export default async function SuperAdminDocumentsPage({
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        <form style={{ display: 'contents' }}>
-          <select
-            name="type"
-            className="input"
-            style={{ width: 'auto', minWidth: '160px' }}
-            defaultValue={searchParams.type || ''}
-            onChange={e => {
-              const url = new URL(window.location.href)
-              e.target.value ? url.searchParams.set('type', e.target.value) : url.searchParams.delete('type')
-              window.location.href = url.toString()
-            }}
-          >
-            <option value="">All types</option>
-            {docTypes.map(t => (
-              <option key={t} value={t}>{DOC_TYPE_CONFIG[t].label}</option>
-            ))}
-          </select>
-          <select
-            name="projectId"
-            className="input"
-            style={{ width: 'auto', minWidth: '200px' }}
-            defaultValue={searchParams.projectId || ''}
-            onChange={e => {
-              const url = new URL(window.location.href)
-              e.target.value ? url.searchParams.set('projectId', e.target.value) : url.searchParams.delete('projectId')
-              window.location.href = url.toString()
-            }}
-          >
-            <option value="">All projects</option>
-            {projects.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-        </form>
-      </div>
+      <DocumentFilters
+        docTypes={docTypes}
+        docTypeConfig={DOC_TYPE_CONFIG}
+        projects={projects}
+        currentType={searchParams.type}
+        currentProjectId={searchParams.projectId}
+      />
 
       {/* Type summary badges */}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>

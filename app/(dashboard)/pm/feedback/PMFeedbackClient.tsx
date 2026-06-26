@@ -17,7 +17,7 @@ interface FeedbackItem {
   title: string
   description?: string | null
   status: string
-  createdAt: string
+  createdAt: string | Date
   project: { id: string; name: string; slug: string }
   comment?: { user: { name: string; role: string } } | null
   assignee?: { id: string; name: string } | null

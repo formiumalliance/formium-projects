@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/requirements/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -36,7 +37,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if ([UserRole.CLIENT_ADMIN, UserRole.CLIENT_MEMBER, UserRole.DEVELOPER].includes(userRole)) {
+    if (
+  userRole === UserRole.CLIENT_ADMIN ||
+  userRole === UserRole.CLIENT_MEMBER ||
+  userRole === UserRole.DEVELOPER
+) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
   }
 

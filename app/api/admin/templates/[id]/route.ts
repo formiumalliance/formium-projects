@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/admin/templates/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -14,7 +15,13 @@ export async function PATCH(
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD].includes(userRole)) {
+    if (
+
+  userRole !== UserRole.SUPER_ADMIN &&
+
+  userRole !== UserRole.PROJECT_HEAD
+
+) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
   }
 

@@ -91,7 +91,7 @@ module.exports = {
     },
   },
   plugins: [
-    require('tailwindcss/plugin')(function({ addUtilities }) {
+    require('tailwindcss/plugin')(function({ addUtilities }: any) {
       addUtilities({
         '.no-scrollbar': {
           '-ms-overflow-style': 'none',

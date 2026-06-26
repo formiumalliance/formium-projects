@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // app/api/projects/[id]/change-requests/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/session'
@@ -84,7 +85,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    if (![UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD].includes(userRole)) {
+    if (
+  userRole !== UserRole.SUPER_ADMIN &&
+  userRole !== UserRole.PROJECT_HEAD
+) {
     return NextResponse.json({ error: 'Only Project Heads can decide on change requests' }, { status: 403 })
   }
 

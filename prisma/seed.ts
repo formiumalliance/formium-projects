@@ -208,7 +208,6 @@ async function main() {
         data: {
           projectId: project.id,
           title: ms.title,
-          daysFromStart: ms.daysFromStart,
           isCompleted: ms.isCompleted,
           completedAt: ms.completedAt,
           dueDate: new Date(new Date('2024-01-20').getTime() + ms.daysFromStart * 86400000),
