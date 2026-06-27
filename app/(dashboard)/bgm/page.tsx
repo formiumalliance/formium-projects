@@ -159,7 +159,7 @@ export default async function BGMDashboardPage() {
                     {proposal.title}
                   </p>
                   <p style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-                    {proposal.project.name} · {formatDate(proposal.createdAt)}
+                    {proposal.project?.name ?? 'No project'} · {formatDate(proposal.createdAt)}
                   </p>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
