@@ -80,6 +80,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|apple-touch-icon.png).*)',
+    // Exclude Next.js internals, static files, and public assets
+    '/((?!_next/static|_next/image|favicon\.ico|apple-touch-icon\.png|branding/).*)',
   ],
 }
