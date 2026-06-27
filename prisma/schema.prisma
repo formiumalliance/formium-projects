@@ -270,7 +270,6 @@ model Project {
   handover        Handover?
   milestones      Milestone[]
   requirements    Requirement[]
-  proposals       Proposal[]
   invoices        Invoice[]
 
   @@index([status])
