@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const userRole = session.user.role as UserRole
-    const allowedRoles: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD, UserRole.BUSINESS_GROWTH_MANAGER]
+    const allowedRoles: UserRole[] = [UserRole.SUPER_ADMIN, UserRole.PROJECT_HEAD, UserRole.BUSINESS_GROWTH_MANAGER, UserRole.PROJECT_MANAGER]
     
     if (!allowedRoles.includes(userRole)) {
     return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
@@ -161,18 +161,26 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Apply template
+    // Apply template — wrapped in try/catch so project creation never fails if template errors
     if (data.useTemplate && data.projectManagerId) {
-    await applyTemplateToProject(
-      project.id,
-      data.type,
-      data.projectManagerId,
-      data.startDate ? new Date(data.startDate) : undefined
-    )
-  }
+      try {
+        await applyTemplateToProject(
+          project.id,
+          data.type,
+          data.projectManagerId,
+          data.startDate ? new Date(data.startDate) : undefined
+        )
+      } catch (templateError) {
+        console.error('[template] Failed to apply template (project still created):', templateError)
+      }
+    }
 
-    // Notify
-    await notifyProjectCreated(project.id)
+    // Notify — wrapped so project creation never fails on notification errors
+    try {
+      await notifyProjectCreated(project.id)
+    } catch (notifyError) {
+      console.error('[notify] Failed to send project notifications (project still created):', notifyError)
+    }
 
     // Audit
     await createAuditLog({

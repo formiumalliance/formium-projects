@@ -15,7 +15,7 @@ const CreateUserSchema = z.object({
   role: z.nativeEnum(UserRole),
   phone: z.string().optional(),
   companyName: z.string().optional(), // for clients
-  tempPassword: z.string().min(8).optional(),
+  tempPassword: z.preprocess(v => (v === '' ? undefined : v), z.string().min(8).optional()),
 })
 
 export async function GET(req: NextRequest) {
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       isActive: true,
       lastLoginAt: true,
       createdAt: true,
-      clientProfile: { select: { companyName: true } },
+      clientProfile: { select: { id: true, companyName: true } },
       _count: {
         select: {
           projectsAsPM: true,
