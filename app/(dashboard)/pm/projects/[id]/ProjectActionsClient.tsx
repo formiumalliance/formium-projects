@@ -14,6 +14,7 @@ interface Props {
     timelinePaused: boolean
     slug: string
   }
+  portalBase?: string // e.g. '/pm', '/bgm', '/super-admin'
 }
 
 const STATUS_TRANSITIONS: Record<string, { label: string; next: string; icon: typeof Play }[]> = {
@@ -45,7 +46,7 @@ const PHASE_LABELS: Record<string, string> = {
   LAUNCH: 'Launch',
 }
 
-export default function ProjectActionsClient({ project }: Props) {
+export default function ProjectActionsClient({ project, portalBase = '/pm' }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -75,7 +76,7 @@ export default function ProjectActionsClient({ project }: Props) {
   return (
     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
       <Link
-        href={`/pm/projects/${project.id}/updates/new`}
+        href={`${portalBase}/projects/${project.id}/updates/new`}
         className="btn btn-secondary btn-sm"
       >
         Post update

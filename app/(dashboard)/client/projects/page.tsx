@@ -47,7 +47,7 @@ export default async function ClientProjectsPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {projects.map(project => (
-            <Link key={project.id} href={`/client`} className="card"
+            <Link key={project.id} href={`/client/projects/${project.id}`} className="card"
               style={{ textDecoration: 'none', display: 'block' }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)'}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'}

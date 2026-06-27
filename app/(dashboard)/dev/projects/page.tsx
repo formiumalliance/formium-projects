@@ -109,10 +109,10 @@ export default async function DevProjectsPage() {
                     {` · Joined ${formatDate(assignedAt)}`}
                   </div>
                   <Link
-                    href="/dev"
+                    href={`/dev/projects/${p.id}`}
                     className="btn btn-secondary btn-sm"
                   >
-                    View my tasks →
+                    View project →
                   </Link>
                 </div>
               </div>
