@@ -14,10 +14,17 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const unreadOnly = searchParams.get('unread') === 'true'
 
+    // BUG-009: use count() for unread-only queries instead of fetching all records
+    if (unreadOnly) {
+      const unreadCount = await prisma.notification.count({
+        where: { userId: session.user.id, isRead: false },
+      })
+      return NextResponse.json({ unreadCount })
+    }
+
     const notifications = await prisma.notification.findMany({
     where: {
       userId: session.user.id,
-      ...(unreadOnly ? { isRead: false } : {}),
     },
     orderBy: { createdAt: 'desc' },
     take: 50,

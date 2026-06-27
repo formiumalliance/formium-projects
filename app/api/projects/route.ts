@@ -15,10 +15,10 @@ const CreateProjectSchema = z.object({
   name: z.string().min(2).max(100),
   type: z.nativeEnum(ProjectType),
   description: z.string().optional(),
-  clientProfileId: z.string().optional(),
-  projectManagerId: z.string().optional(),
-  projectHeadId: z.string().optional(),
-  bgmId: z.string().optional(),
+  clientProfileId: z.string().min(1).optional(),
+  projectManagerId: z.string().min(1).optional(),
+  projectHeadId: z.string().min(1).optional(),
+  bgmId: z.string().min(1).optional(),
   proposedBudget: z.number().optional(),
   agreedBudget: z.number().optional(),
   currency: z.string().default('INR'),
@@ -128,24 +128,38 @@ export async function POST(req: NextRequest) {
     slug = `${baseSlug}-${attempt}`
   }
 
+    // FIX BUG-006: Validate all FK IDs exist before creating project
+    if (data.clientProfileId) {
+      const clientExists = await prisma.clientProfile.findUnique({ where: { id: data.clientProfileId } })
+      if (!clientExists) return NextResponse.json({ error: 'Client not found. Please select a valid client.' }, { status: 400 })
+    }
+    if (data.projectManagerId) {
+      const pmExists = await prisma.user.findUnique({ where: { id: data.projectManagerId } })
+      if (!pmExists) return NextResponse.json({ error: 'Project Manager not found.' }, { status: 400 })
+    }
+    if (data.projectHeadId) {
+      const phExists = await prisma.user.findUnique({ where: { id: data.projectHeadId } })
+      if (!phExists) return NextResponse.json({ error: 'Project Head not found.' }, { status: 400 })
+    }
+
     const project = await prisma.project.create({
-    data: {
-      name: data.name,
-      type: data.type,
-      description: data.description,
-      slug,
-      clientProfileId: data.clientProfileId,
-      projectManagerId: data.projectManagerId,
-      projectHeadId: data.projectHeadId || session.user.id,
-      bgmId: data.bgmId,
-      proposedBudget: data.proposedBudget,
-      agreedBudget: data.agreedBudget,
-      currency: data.currency,
-      startDate: data.startDate ? new Date(data.startDate) : undefined,
-      expectedEndDate: data.expectedEndDate ? new Date(data.expectedEndDate) : undefined,
-      status: 'DRAFT',
-    },
-  })
+      data: {
+        name: data.name,
+        type: data.type,
+        description: data.description,
+        slug,
+        clientProfileId: data.clientProfileId || null,
+        projectManagerId: data.projectManagerId || null,
+        projectHeadId: data.projectHeadId || session.user.id,
+        bgmId: data.bgmId || null,
+        proposedBudget: data.proposedBudget,
+        agreedBudget: data.agreedBudget,
+        currency: data.currency,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
+        expectedEndDate: data.expectedEndDate ? new Date(data.expectedEndDate) : undefined,
+        status: 'DRAFT',
+      },
+    })
 
     // Apply template
     if (data.useTemplate && data.projectManagerId) {

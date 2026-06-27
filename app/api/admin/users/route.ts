@@ -117,13 +117,20 @@ if (
     })
   }
 
-    // Send welcome email
-    await sendWelcomeEmail(user.email, user.name, tempPassword)
+    // Send welcome email — FIX BUG-001: don't fail user creation if email fails
+    let emailSent = true
+    try {
+      await sendWelcomeEmail(user.email, user.name, tempPassword)
+    } catch (emailError) {
+      emailSent = false
+      console.error('[mailer] Welcome email failed (user still created):', emailError)
+    }
 
     return NextResponse.json({
-    data: { id: user.id, email: user.email, name: user.name, role: user.role },
-    tempPassword, // Return to admin for sharing
-  }, { status: 201 })
+      data: { id: user.id, email: user.email, name: user.name, role: user.role },
+      tempPassword, // Return to admin for sharing/manual delivery
+      emailSent,    // Let frontend know if email was sent
+    }, { status: 201 })
   } catch (error) {
     return handleApiError(error)
   }

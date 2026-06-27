@@ -81,7 +81,7 @@ export default async function AuditLogPage({
       </div>
 
       {/* Log table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="card table-wrap" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: '140px 80px 100px 1fr 160px',

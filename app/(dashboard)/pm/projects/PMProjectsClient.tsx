@@ -96,7 +96,7 @@ export default function PMProjectsClient({ projects, total, page, pageSize, isAd
           </p>
         </div>
         {isAdmin && (
-          <Link href="/pm/projects/new" className="btn btn-primary">
+          <Link href="projects/new" className="btn btn-primary">
             <PlusCircle size={15} />
             New project
           </Link>
@@ -166,7 +166,7 @@ export default function PMProjectsClient({ projects, total, page, pageSize, isAd
           {projects.map((project, i) => (
             <Link
               key={project.id}
-              href={`/pm/projects/${project.id}`}
+              href={`projects/${project.id}`}
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr auto auto auto auto',
@@ -225,7 +225,7 @@ export default function PMProjectsClient({ projects, total, page, pageSize, isAd
           {projects.map(project => (
             <Link
               key={project.id}
-              href={`/pm/projects/${project.id}`}
+              href={`projects/${project.id}`}
               className="card"
               style={{ textDecoration: 'none', display: 'block', transition: 'box-shadow 0.15s, transform 0.15s' }}
               onMouseEnter={e => {

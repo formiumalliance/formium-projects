@@ -45,7 +45,7 @@ export default function UsersPage() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [creating, setCreating] = useState(false)
   const [newUser, setNewUser] = useState({
-    name: '', email: '', role: 'DEVELOPER', phone: '', companyName: '',
+    name: '', email: '', role: 'DEVELOPER', phone: '', companyName: '', tempPassword: '',
   })
   const [createdPassword, setCreatedPassword] = useState('')
 
@@ -82,11 +82,16 @@ export default function UsersPage() {
       setCreating(false)
       return
     }
+    // FIX BUG-001: always show password (email may not have sent)
     setCreatedPassword(data.tempPassword)
     setUsers(prev => [data.data, ...prev])
     setCreating(false)
-    toast.success(`User created. Temporary password sent to ${newUser.email}`)
-    setNewUser({ name: '', email: '', role: 'DEVELOPER', phone: '', companyName: '' })
+    if (data.emailSent === false) {
+      toast.warning(`User created. Email delivery failed — share the password shown below manually.`)
+    } else {
+      toast.success(`User created. Temporary password sent to ${newUser.email}`)
+    }
+    setNewUser({ name: '', email: '', role: 'DEVELOPER', phone: '', companyName: '', tempPassword: '' })
   }
 
   async function toggleUserActive(userId: string, isActive: boolean) {
@@ -149,7 +154,7 @@ export default function UsersPage() {
       </div>
 
       {/* Users table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="card table-wrap" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: '24px' }}>
             {[1, 2, 3, 4, 5].map(i => (
@@ -274,6 +279,14 @@ export default function UsersPage() {
                 <label className="input-label">Phone (optional)</label>
                 <input className="input" placeholder="+91 98765 43210" value={newUser.phone}
                   onChange={e => setNewUser(p => ({ ...p, phone: e.target.value }))} />
+              </div>
+              <div>
+                <label className="input-label">Temporary password (optional)</label>
+                <input className="input" type="text" placeholder="Leave blank to auto-generate" value={newUser.tempPassword}
+                  onChange={e => setNewUser(p => ({ ...p, tempPassword: e.target.value }))} />
+                <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '5px' }}>
+                  Min 8 characters. A secure password will be generated automatically if left blank.
+                </p>
               </div>
               {['CLIENT_ADMIN', 'CLIENT_MEMBER'].includes(newUser.role) && (
                 <div>

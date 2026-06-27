@@ -12,6 +12,7 @@ import {
   PlusCircle, TrendingUp, FolderOpen, User
 } from 'lucide-react'
 import { getInitials } from '@/lib/utils'
+import { useBranding } from '@/components/providers/BrandingProvider'
 import NotificationsDropdown from '@/components/notifications/NotificationsDropdown'
 
 // ─── Nav definitions (all icons live here, never passed as props) ─────────────
@@ -48,11 +49,12 @@ const PORTAL_NAV: Record<string, { label: string; href: string; icon: React.Elem
     { label: 'Handover',        href: '/pm/handover',        icon: Package },
   ],
   'bgm': [
-    { label: 'Dashboard',    href: '/bgm',              icon: LayoutDashboard },
-    { label: 'All Projects', href: '/bgm/projects',     icon: FolderKanban },
-    { label: 'New Project',  href: '/bgm/projects/new', icon: PlusCircle },
-    { label: 'Proposals',    href: '/bgm/proposals',    icon: FileText },
-    { label: 'Revenue',      href: '/bgm/revenue',      icon: TrendingUp },
+    { label: 'Dashboard',       href: '/bgm',              icon: LayoutDashboard },
+    { label: 'All Projects',    href: '/bgm/projects',     icon: FolderKanban },
+    { label: 'New Project',     href: '/bgm/projects/new', icon: PlusCircle },
+    { label: 'Proposals',       href: '/bgm/proposals',    icon: FileText },
+    { label: 'Contact Sphere',  href: '/bgm/contacts',     icon: Users },
+    { label: 'Revenue',         href: '/bgm/revenue',      icon: TrendingUp },
   ],
   'dev': [
     { label: 'My Tasks', href: '/dev',          icon: CheckSquare },
@@ -88,6 +90,7 @@ export default function DashboardLayout({ children, portalKey, portalName }: Das
 
   const navItems = PORTAL_NAV[portalKey] ?? []
   const user = session?.user
+  const { logoUrl } = useBranding()
 
   useEffect(() => {
     fetch('/api/notifications?unread=true')
@@ -138,11 +141,17 @@ export default function DashboardLayout({ children, portalKey, portalName }: Das
           justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '1px' }}>
-              <span style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '-0.4px', color: 'var(--text)' }}>
-                Formium
-              </span>
-              <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '16px' }}>·</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" style={{ height: '28px', width: 'auto', objectFit: 'contain' }} />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '1px' }}>
+                  <span style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '-0.4px', color: 'var(--text)' }}>
+                    Formium
+                  </span>
+                  <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '16px' }}>·</span>
+                </div>
+              )}
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '1px', fontWeight: '500' }}>
               {portalName}
